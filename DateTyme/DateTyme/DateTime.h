@@ -98,6 +98,7 @@ public:
 	friend std::ostream& operator << (std::ostream& os, Date& d)
 	{
 		os << d.year;
+		//Todo
 	}
 };
 
