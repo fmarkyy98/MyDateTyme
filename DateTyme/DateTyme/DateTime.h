@@ -93,12 +93,32 @@ public:
 		d.setMonth(tmp);
 		is >> tmp;
 		d.setDay(tmp);
+		return is;
 	}
 
 	friend std::ostream& operator << (std::ostream& os, Date& d)
 	{
-		os << d.year;
-		//Todo
+		os << d.year <<".";
+
+		if (d.month < 10)
+		{
+			os << "0" << d.month << ".";
+		}
+		else
+		{
+			os << d.month << ".";
+		}
+
+		if (d.day < 10)
+		{
+			os << "0" << d.day << ".";
+		}
+		else
+		{
+			os << d.day << ".";
+		}
+
+		return os;
 	}
 };
 
@@ -119,7 +139,7 @@ public:
 		}
 		else
 		{
-			throw "Invalid argument for hour.";
+			throw std::invalid_argument("Hour should be in [1, 23] intervall.");
 		}
 	}
 
@@ -132,7 +152,7 @@ public:
 		}
 		else
 		{
-			throw "Invalid argument for minute.";
+			throw std::invalid_argument("Minute should be in [1, 59] intervall.");
 		}
 	}
 
@@ -141,11 +161,11 @@ public:
 	{
 		if (0 <= second && second <= 59)
 		{
-			this->minute = second;
+			this->second = second;
 		}
 		else
 		{
-			throw "Invalid argument for second.";
+			throw std::invalid_argument("Hour should be in [1, 59] intervall.");
 		}
 	}
 
@@ -154,6 +174,50 @@ public:
 		setHour(hour);
 		setMinute(minute);
 		setSecond(second);
+	}
+
+	friend std::istream& operator >> (std::istream& is, Time& t)
+	{
+		int tmp;
+		is >> tmp;
+		t.setHour(tmp);
+		is >> tmp;
+		t.setMinute(tmp);
+		is >> tmp;
+		t.setSecond(tmp);
+		return is;
+	}
+
+	friend std::ostream& operator << (std::ostream& os, Time& t)
+	{
+		if (t.hour < 10)
+		{
+			os << "0" << t.hour << ":";
+		}
+		else
+		{
+			os << t.hour << ":";
+		}
+
+		if (t.minute < 10)
+		{
+			os << "0" << t.minute << ":";
+		}
+		else
+		{
+			os << t.minute << ":";
+		}
+
+		if (t.second < 10)
+		{
+			os << "0" << t.second;
+		}
+		else
+		{
+			os << t.second;
+		}
+
+		return os;
 	}
 };
 
