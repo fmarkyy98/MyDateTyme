@@ -11,6 +11,36 @@ protected:
 	int day = 1;
 
 public:
+	int numberOfLargestPossibleDay()
+	{
+		switch (this->month)
+		{
+			break;
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			return 30;
+			break;
+		case 2:
+			if (this->year % 400 == 0)
+			{
+				return 29;
+			}
+			if (this->year % 100 == 0)
+			{
+				return 28;
+			}
+			if (this->year % 4 == 0)
+			{
+				return 29;
+			}
+			return 28;
+			break;
+		}
+		return 31;
+	}
+
 	int getYear() const { return this->year; }
 	void setYear(const int year) { this->year = year; }
 
@@ -30,50 +60,13 @@ public:
 	int getDay() const { return this->day; }
 	void setDay(const int day)
 	{
-		switch (this->month)
+		if (1 <= day && day <= this->numberOfLargestPossibleDay())
 		{
-		case 1:
-		case 3:
-		case 5:
-		case 7:
-		case 8:
-		case 10:
-		case 12:
-			if (1 <= day && day <= 31)
-			{
-				this->day = day;
-			}
-			else
-			{
-				throw std::invalid_argument("Day should be in [1, 31] intervall in this month.");
-			}
-			break;
-		case 4:
-		case 6:
-		case 9:
-		case 11:
-			if (1 <= day && day <= 30)
-			{
-				this->day = day;
-			}
-			else
-			{
-				throw std::invalid_argument("Day should be in [1, 30] intervall in this month.");
-			}
-			break;
-		case 2:
-			if ((this->year % 400 == 0 && 1 <= day && day <= 29) ||
-				(this->year % 100 == 0 && 1 <= day && day <= 28) ||
-				(this->year % 4 == 0 && 1 <= day && day <= 29) ||
-				(1 <= day && day <= 28))
-			{
-				this->day = day;
-			}
-			else
-			{
-				throw std::invalid_argument("February can be tricky but hold on! If the current year is divisible by 400, day should be in [1, 29]. If the current year is divisible by 100, day should be in [1, 28]. If the current year is divisible by 4, day should be in [1, 29]. Otherwise day should be in [1, 28].");
-			}
-			break;
+			this->day = day;
+		}
+		else
+		{
+			throw std::invalid_argument("Day should be in [1, " + std::to_string(this->numberOfLargestPossibleDay()) + "] intervall in this month.");
 		}
 	}
 
@@ -82,6 +75,25 @@ public:
 		setYear(year);
 		setMonth(month);
 		setDay(day);
+	}
+
+	void AddYear(const int year)
+	{
+		this->year += year;
+	}
+
+	void AddMonth(const int month)
+	{
+		this->month += month;
+		this->AddYear(this->month / 12);
+		this->month %= 12;
+	}
+
+	void AddDay(const int day)
+	{
+		this->day += day;
+		this->AddMonth(this->day / this->numberOfLargestPossibleDay());
+		this->day %= this->numberOfLargestPossibleDay();
 	}
 
 	friend std::istream& operator >> (std::istream& is, Date& d)
@@ -98,7 +110,7 @@ public:
 
 	friend std::ostream& operator << (std::ostream& os, Date& d)
 	{
-		os << d.year <<".";
+		os << d.year << ".";
 
 		if (d.month < 10)
 		{
@@ -139,7 +151,7 @@ public:
 		}
 		else
 		{
-			throw std::invalid_argument("Hour should be in [1, 23] intervall.");
+			throw std::invalid_argument("Hour should be in [0, 23] intervall.");
 		}
 	}
 
@@ -152,7 +164,7 @@ public:
 		}
 		else
 		{
-			throw std::invalid_argument("Minute should be in [1, 59] intervall.");
+			throw std::invalid_argument("Minute should be in [0, 59] intervall.");
 		}
 	}
 
@@ -165,7 +177,7 @@ public:
 		}
 		else
 		{
-			throw std::invalid_argument("Hour should be in [1, 59] intervall.");
+			throw std::invalid_argument("Hour should be in [0, 59] intervall.");
 		}
 	}
 
@@ -174,6 +186,26 @@ public:
 		setHour(hour);
 		setMinute(minute);
 		setSecond(second);
+	}
+
+	virtual void AddHour(const int hour)
+	{
+		this->hour += hour;
+		this->hour %= 24;
+	}
+
+	void AddMinute(const int minute)
+	{
+		this->minute += minute;
+		this->AddHour(this->minute / 60);
+		this->minute %= 60;
+	}
+
+	void AddSecond(const int second)
+	{
+		this->second += second;
+		this->AddMinute(this->second / 60);
+		this->second %= 60;
 	}
 
 	friend std::istream& operator >> (std::istream& is, Time& t)
@@ -239,6 +271,13 @@ public:
 	{
 		Time result(this->hour, this->minute, this->second);
 		return result;
+	}
+
+	void AddHour(const int hour) override
+	{
+		this->hour += hour;
+		this->AddDay(this->hour / 24);
+		this->hour %= 24;
 	}
 
 	friend std::istream& operator >> (std::istream& is, DateTime& dt)
