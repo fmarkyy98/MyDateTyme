@@ -5,7 +5,7 @@
 
 class Date
 {
-private:
+protected:
 	int year = 1970;
 	int month = 1;
 	int day = 1;
@@ -124,7 +124,7 @@ public:
 
 class Time
 {
-private:
+protected:
 	int hour = 0;
 	int minute = 0;
 	int second = 0;
@@ -223,6 +223,47 @@ public:
 
 class DateTime : public Date, public Time
 {
+public:
 	DateTime(int year = 1970, int month = 1, int day = 1, int hour = 0, int minute = 0, int second = 0) :
 		Date(year, month, day), Time(hour, minute, second) { }
+
+	DateTime(Date date, Time time) : Date(date), Time(time) { }
+
+	Date getDate()
+	{
+		Date result(this->year, this->month, this->day);
+		return result;
+	}
+
+	Time getTime()
+	{
+		Time result(this->hour, this->minute, this->second);
+		return result;
+	}
+
+	friend std::istream& operator >> (std::istream& is, DateTime& dt)
+	{
+		int tmp;
+		is >> tmp;
+		dt.setYear(tmp);
+		is >> tmp;
+		dt.setMonth(tmp);
+		is >> tmp;
+		dt.setDay(tmp);
+		is >> tmp;
+		dt.setHour(tmp);
+		is >> tmp;
+		dt.setMinute(tmp);
+		is >> tmp;
+		dt.setSecond(tmp);
+		return is;
+	}
+
+	friend std::ostream& operator << (std::ostream& os, DateTime& dt)
+	{
+		Date date = dt.getDate();
+		Time time = dt.getTime();
+		os << date << " " << time;
+		return os;
+	}
 };
