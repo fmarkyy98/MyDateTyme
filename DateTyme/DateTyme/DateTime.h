@@ -11,7 +11,30 @@ protected:
 	int day = 1;
 
 public:
-	int numberOfLargestPossibleDay()
+	bool IsLeapYear() const
+	{
+		if (this->year % 400 == 0)
+		{
+			return true;
+		}
+		if (this->year % 100 == 0)
+		{
+			return false;
+		}
+		if (this->year % 4 == 0)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	int numberOfDays() const
+	{
+		int result = this->IsLeapYear() ? 366 : 365;
+		return result;
+	}
+
+	int numberOfLargestPossibleDay() const
 	{
 		switch (this->month)
 		{
@@ -85,15 +108,25 @@ public:
 	void AddMonth(const int month)
 	{
 		this->month += month;
-		this->AddYear(this->month / 12);
-		this->month %= 12;
+		if (this->month / 13) this->AddYear(this->month / 13);
+		this->month = (this->month - 1) % 12 + 1;
 	}
 
 	void AddDay(const int day)
 	{
 		this->day += day;
-		this->AddMonth(this->day / this->numberOfLargestPossibleDay());
-		this->day %= this->numberOfLargestPossibleDay();
+		while (this->day > this->numberOfDays())
+		{
+			this->day -= this->numberOfDays();
+			this->AddYear(1);
+		}
+		while (this->day > this->numberOfLargestPossibleDay())
+		{
+			this->day -= this->numberOfLargestPossibleDay();
+			this->AddMonth(1);
+		}
+		if (this->numberOfLargestPossibleDay())  this->AddMonth(this->day / (this->numberOfLargestPossibleDay() + 1));
+		this->day = (this->day - 1) % this->numberOfLargestPossibleDay() + 1;
 	}
 
 	friend std::istream& operator >> (std::istream& is, Date& d)
@@ -197,14 +230,14 @@ public:
 	void AddMinute(const int minute)
 	{
 		this->minute += minute;
-		this->AddHour(this->minute / 60);
+		if (this->minute / 60) this->AddHour(this->minute / 60);
 		this->minute %= 60;
 	}
 
 	void AddSecond(const int second)
 	{
 		this->second += second;
-		this->AddMinute(this->second / 60);
+		if (this->minute / 60) this->AddMinute(this->minute / 60);
 		this->second %= 60;
 	}
 
@@ -261,13 +294,13 @@ public:
 
 	DateTime(Date date, Time time) : Date(date), Time(time) { }
 
-	Date getDate()
+	Date getDate() const
 	{
 		Date result(this->year, this->month, this->day);
 		return result;
 	}
 
-	Time getTime()
+	Time getTime() const
 	{
 		Time result(this->hour, this->minute, this->second);
 		return result;
@@ -276,7 +309,7 @@ public:
 	void AddHour(const int hour) override
 	{
 		this->hour += hour;
-		this->AddDay(this->hour / 24);
+		if (this->hour / 24) this->AddDay(this->hour / 24);
 		this->hour %= 24;
 	}
 
