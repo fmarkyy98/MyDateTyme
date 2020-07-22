@@ -108,7 +108,7 @@ public:
 	void AddMonth(const int month)
 	{
 		this->month += month;
-		if (this->month / 13) this->AddYear(this->month / 13);
+		if ((this->month - 1) / 12) this->AddYear((this->month - 1) / 12);
 		this->month = (this->month - 1) % 12 + 1;
 	}
 
@@ -237,7 +237,7 @@ public:
 	void AddSecond(const int second)
 	{
 		this->second += second;
-		if (this->minute / 60) this->AddMinute(this->minute / 60);
+		if (this->second / 60) this->AddMinute(this->second / 60);
 		this->second %= 60;
 	}
 
